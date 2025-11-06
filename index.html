@@ -16,11 +16,15 @@
   </header>
 
   <main>
+    <!-- Cadastro -->
     <section id="cadastro">
       <h2>Cadastro de Cliente e Veículo</h2>
       <form id="formCadastro">
         <label>Nome do Cliente:</label>
         <input type="text" id="cliente" required>
+
+        <label>Número de Contato:</label>
+        <input type="tel" id="telefone" placeholder="(XX) XXXXX-XXXX" required>
 
         <label>Modelo do Veículo:</label>
         <input type="text" id="veiculo" required>
@@ -32,6 +36,7 @@
       </form>
     </section>
 
+    <!-- Avaliação -->
     <section id="avaliacao">
       <h2>Avaliação de Serviços</h2>
       <form id="formAvaliacao">
@@ -45,12 +50,14 @@
       </form>
     </section>
 
+    <!-- Orçamento -->
     <section id="orcamento">
       <h2>Orçamento Gerado</h2>
       <div id="orcamentoInfo"></div>
       <button id="aprovarBtn" class="hidden">Aprovar Orçamento</button>
     </section>
 
+    <!-- Status -->
     <section id="status" class="hidden">
       <h2>Status dos Serviços</h2>
       <p id="statusTexto"></p>

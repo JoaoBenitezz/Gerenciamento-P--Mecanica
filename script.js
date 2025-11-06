@@ -6,14 +6,16 @@ const statusSec = document.getElementById("status");
 const statusTexto = document.getElementById("statusTexto");
 
 let clienteAtual = null;
+let telefoneAtual = null;
 let veiculoAtual = null;
 
 formCadastro.addEventListener("submit", (e) => {
   e.preventDefault();
   clienteAtual = document.getElementById("cliente").value;
+  telefoneAtual = document.getElementById("telefone").value;
   veiculoAtual = document.getElementById("veiculo").value;
 
-  alert(`Cliente ${clienteAtual} e veículo ${veiculoAtual} cadastrados!`);
+  alert(`Cliente ${clienteAtual} cadastrado com sucesso!`);
   formCadastro.reset();
 });
 
@@ -25,6 +27,7 @@ formAvaliacao.addEventListener("submit", (e) => {
 
   const orcamento = {
     cliente: clienteAtual,
+    telefone: telefoneAtual,
     veiculo: veiculoAtual,
     servicos,
     valor,
@@ -41,10 +44,12 @@ formAvaliacao.addEventListener("submit", (e) => {
 
   orcamentoInfo.innerHTML = `
     <p><strong>Cliente:</strong> ${orcamento.cliente}</p>
+    <p><strong>Telefone:</strong> ${orcamento.telefone}</p>
     <p><strong>Veículo:</strong> ${orcamento.veiculo}</p>
     <p><strong>Serviços:</strong> ${orcamento.servicos}</p>
     <p><strong>Valor Estimado:</strong> R$ ${orcamento.valor}</p>
   `;
+
   aprovarBtn.classList.remove("hidden");
   formAvaliacao.reset();
 });
