@@ -1,3 +1,6 @@
+const API_URL = "http://localhost:8080"; // URL base do seu back-end
+
+// ELEMENTOS HTML
 const formCadastro = document.getElementById("formCadastro");
 const formAvaliacao = document.getElementById("formAvaliacao");
 const orcamentoInfo = document.getElementById("orcamentoInfo");
@@ -6,62 +9,115 @@ const statusSec = document.getElementById("status");
 const statusTexto = document.getElementById("statusTexto");
 
 let clienteAtual = null;
-let telefoneAtual = null;
-let veiculoAtual = null;
 
-formCadastro.addEventListener("submit", (e) => {
+// ==================== CADASTRAR CLIENTE ====================
+formCadastro.addEventListener("submit", async (e) => {
   e.preventDefault();
-  clienteAtual = document.getElementById("cliente").value;
-  telefoneAtual = document.getElementById("telefone").value;
-  veiculoAtual = document.getElementById("veiculo").value;
 
-  alert(`Cliente ${clienteAtual} cadastrado com sucesso!`);
-  formCadastro.reset();
+  const cliente = {
+    nome: document.getElementById("cliente").value,
+    telefone: document.getElementById("telefone").value,
+    veiculo: document.getElementById("veiculo").value,
+    placa: document.getElementById("placa").value
+  };
+
+  try {
+    const response = await fetch(`${API_URL}/clientes`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cliente)
+    });
+
+    if (!response.ok) throw new Error("Erro ao cadastrar cliente");
+    const data = await response.json();
+    clienteAtual = data;
+
+    alert(`Cliente ${data.nome} cadastrado com sucesso!`);
+    formCadastro.reset();
+  } catch (error) {
+    console.error(error);
+    alert("Falha ao conectar com o servidor Java!");
+  }
 });
 
-formAvaliacao.addEventListener("submit", (e) => {
+// ==================== CRIAR ORÇAMENTO ====================
+formAvaliacao.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const servicos = document.getElementById("servicos").value;
-  const valor = document.getElementById("valor").value;
+  if (!clienteAtual) {
+    alert("Cadastre um cliente antes de criar o orçamento!");
+    return;
+  }
 
   const orcamento = {
     cliente: clienteAtual,
-    telefone: telefoneAtual,
-    veiculo: veiculoAtual,
-    servicos,
-    valor,
-    status: "Pendente"
+    servicos: document.getElementById("servicos").value,
+    valor: parseFloat(document.getElementById("valor").value),
+    aprovado: false
   };
 
-  localStorage.setItem(
-    "orcamentos",
-    JSON.stringify([
-      ...(JSON.parse(localStorage.getItem("orcamentos")) || []),
-      orcamento
-    ])
-  );
+  try {
+    const response = await fetch(`${API_URL}/orcamentos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orcamento)
+    });
 
+    if (!response.ok) throw new Error("Erro ao criar orçamento");
+
+    const data = await response.json();
+    mostrarOrcamento(data);
+    formAvaliacao.reset();
+  } catch (error) {
+    console.error(error);
+    alert("Falha ao criar orçamento!");
+  }
+});
+
+// ==================== MOSTRAR ORÇAMENTO NA TELA ====================
+function mostrarOrcamento(orcamento) {
   orcamentoInfo.innerHTML = `
-    <p><strong>Cliente:</strong> ${orcamento.cliente}</p>
-    <p><strong>Telefone:</strong> ${orcamento.telefone}</p>
-    <p><strong>Veículo:</strong> ${orcamento.veiculo}</p>
+    <p><strong>Cliente:</strong> ${orcamento.cliente.nome}</p>
+    <p><strong>Telefone:</strong> ${orcamento.cliente.telefone}</p>
+    <p><strong>Veículo:</strong> ${orcamento.cliente.veiculo}</p>
     <p><strong>Serviços:</strong> ${orcamento.servicos}</p>
     <p><strong>Valor Estimado:</strong> R$ ${orcamento.valor}</p>
   `;
-
   aprovarBtn.classList.remove("hidden");
-  formAvaliacao.reset();
+  aprovarBtn.dataset.id = orcamento.id;
+}
+
+// ==================== APROVAR ORÇAMENTO ====================
+aprovarBtn.addEventListener("click", async () => {
+  const id = aprovarBtn.dataset.id;
+  try {
+    const response = await fetch(`${API_URL}/orcamentos/${id}/aprovar`, {
+      method: "PUT"
+    });
+
+    if (!response.ok) throw new Error("Erro ao aprovar orçamento");
+
+    const data = await response.json();
+    statusSec.classList.remove("hidden");
+    statusTexto.textContent = `Orçamento aprovado! Início em ${data.dataInicio}.`;
+    aprovarBtn.classList.add("hidden");
+  } catch (error) {
+    console.error(error);
+    alert("Falha ao aprovar orçamento!");
+  }
 });
 
-aprovarBtn.addEventListener("click", () => {
-  const diasTrabalho = Math.floor(Math.random() * 5) + 1;
-  statusSec.classList.remove("hidden");
-  statusTexto.textContent = `Orçamento aprovado! O serviço levará cerca de ${diasTrabalho} dia(s).`;
+// ==================== LISTAR ORÇAMENTOS EXISTENTES ====================
+async function carregarOrcamentos() {
+  try {
+    const response = await fetch(`${API_URL}/orcamentos`);
+    if (!response.ok) throw new Error("Erro ao carregar orçamentos");
 
-  let orcamentos = JSON.parse(localStorage.getItem("orcamentos")) || [];
-  orcamentos[orcamentos.length - 1].status = "Aprovado";
-  localStorage.setItem("orcamentos", JSON.stringify(orcamentos));
+    const orcamentos = await response.json();
+    console.log("Orçamentos carregados:", orcamentos);
+  } catch (err) {
+    console.error(err);
+  }
+}
 
-  aprovarBtn.classList.add("hidden");
-});
+window.onload = carregarOrcamentos;
