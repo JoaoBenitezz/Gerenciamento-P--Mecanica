@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciamento de Orçamentos para Mecânica</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Gerenciamento de Orçamentos para Mecânica</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="orcamentos.html">Orçamentos</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="cadastro">
+      <h2>Cadastro de Cliente e Veículo</h2>
+      <form id="formCadastro">
+        <label>Nome do Cliente:</label>
+        <input type="text" id="cliente" required>
+
+        <label>Modelo do Veículo:</label>
+        <input type="text" id="veiculo" required>
+
+        <label>Placa:</label>
+        <input type="text" id="placa" required>
+
+        <button type="submit">Cadastrar</button>
+      </form>
+    </section>
+
+    <section id="avaliacao">
+      <h2>Avaliação de Serviços</h2>
+      <form id="formAvaliacao">
+        <label>Serviços Necessários:</label>
+        <textarea id="servicos" required></textarea>
+
+        <label>Valor Estimado (R$):</label>
+        <input type="number" id="valor" required>
+
+        <button type="submit">Gerar Orçamento</button>
+      </form>
+    </section>
+
+    <section id="orcamento">
+      <h2>Orçamento Gerado</h2>
+      <div id="orcamentoInfo"></div>
+      <button id="aprovarBtn" class="hidden">Aprovar Orçamento</button>
+    </section>
+
+    <section id="status" class="hidden">
+      <h2>Status dos Serviços</h2>
+      <p id="statusTexto"></p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
