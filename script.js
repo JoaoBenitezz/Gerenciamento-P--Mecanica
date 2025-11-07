@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5654"; // URL base do seu back-end
+const API_URL = "http://localhost:5456"; // URL base do seu back-end
 
 // ELEMENTOS HTML
 const formCadastro = document.getElementById("formCadastro");
